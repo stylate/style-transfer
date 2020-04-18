@@ -53,3 +53,9 @@ def gram_matrix(tensor):
     _, n_filters, h, w = tensor.size()
     tensor = tensor.view(n_filters, h * w)
     return torch.mm(tensor, tensor.t())
+
+def show_result(final_img):
+    fig = plt.figure()
+    plt.imshow(final_img)
+    plt.axis('off')
+    plt.savefig('../images/results/modern_starry.png')

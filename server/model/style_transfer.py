@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import utils
 import torch
 import torch.optim as optim
