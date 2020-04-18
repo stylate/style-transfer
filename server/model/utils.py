@@ -3,8 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import torch
-import torch.optim as optim
-from torchvision import transforms, models
+from torchvision import transforms
 
 VGG_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 VGG_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)

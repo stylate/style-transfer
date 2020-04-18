@@ -1,14 +1,8 @@
-# pytorch
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import torchvision.transforms as transforms
-import torchvision.models as models
-
-# misc
+import matplotlib.pyplot as plt
 import utils
-from PIL import Image
+import torch
+import torch.optim as optim
+from torchvision import models
 
 def process(content_path, style_path, iterations=500):
     # init VGG model
