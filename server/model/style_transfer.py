@@ -3,11 +3,11 @@ import torch
 import torch.optim as optim
 from torchvision import models
 
-def process(content_path, style_path, iterations=500):
+def train(content_path, style_path, iterations=50):
     # init VGG model
     vgg = models.vgg19(pretrained=True)
     for param in vgg.parameters():
-        param.requires_grad_(False)
+        param.requires_grad = False
 
     for i, layer in enumerate(vgg.features):
         if isinstance(layer, torch.nn.MaxPool2d):
@@ -41,6 +41,7 @@ def process(content_path, style_path, iterations=500):
     }
 
     for i in range(1, iterations + 1):
+        print('Iteration ', i)
         optimizer.zero_grad()
         target_features = utils.get_features(target, vgg)
 
@@ -57,8 +58,19 @@ def process(content_path, style_path, iterations=500):
             style_loss += layer_style_loss / (dim * h * w)
 
             total_loss = (content_weight * content_loss) + (style_weight * style_loss)
-            total_loss.backward(retain_length=True)
+            total_loss.backward(retain_graph=True)
             optimizer.step()
 
+        if i % 50 == 0:
+            total_loss_rounded = round(total_loss.item(), 2)
+            content_fraction = round(content_weight * content_loss.item() /total_loss.item(), 2)
+            style_fraction = round(style_weight * style_loss.item() / total_loss.item(), 2)
+            print('Iteration {}, Total loss: {} - (content: {}, style {})'.format(
+            i,total_loss_rounded, content_fraction, style_fraction))
+
     final_img = utils.deprocess(target)
+    # utils.show_result(final_img)
     return final_img
+
+
+train('content/dancing.jpg', 'style/picasso.jpg')

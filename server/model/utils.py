@@ -9,6 +9,7 @@ VGG_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 VGG_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
 def load_image(img_path, max_size=400, shape=None):
+    img_path = "../images/" + img_path # parameter should be "content/test.jpg", etc.
     image = Image.open(img_path).convert('RGB')
     size = max(max_size, max(image.size))
     if shape: size = shape
@@ -36,22 +37,22 @@ def get_features(image, model):
         '5': 'conv2_1',
         '10': 'conv3_1',
         '19': 'conv4_1',
-        '21': 'conv4_2',
-        '28': 'conv5_1'
+        '21': 'conv4_2', # content layer
+        '28': 'conv5_1' # rest are style layers
     }
     features = {}
     x = image
 
-    for name, layer in enumerate(model.features):
+    for name, layer in model._modules.items():
         x = layer(x)
-        if str(name) in layers:
-            features[layers[str(name)]] = x
+        if name in layers:
+            features[layers[name]] = x
 
     return features
 
 def gram_matrix(tensor):
-    _, n_filters, h, w = tensor.size()
-    tensor = tensor.view(n_filters, h * w)
+    b, c, h, w = tensor.size() # recall: batch, channels, height, width
+    tensor = tensor.view(b * c, h * w)
     return torch.mm(tensor, tensor.t())
 
 def show_result(final_img):
